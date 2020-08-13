@@ -22,4 +22,11 @@ public interface NoticeService {
      */
     public void startNewBark(SymbolBarkConfig symbolBarkConfig);
 
+    /**
+     * 通过给定的通知服务配置关闭通知服务
+     *
+     * @param symbolBarkConfig 给定通知服务配置
+     */
+    public void removeBark(SymbolBarkConfig symbolBarkConfig);
+
 }
