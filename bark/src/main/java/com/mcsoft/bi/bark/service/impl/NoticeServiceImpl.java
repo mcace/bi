@@ -7,6 +7,8 @@ import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
 import com.mcsoft.bi.bark.service.DingBotService;
 import com.mcsoft.bi.bark.service.NoticeService;
 import com.mcsoft.bi.common.bian.collector.ApiCollector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class NoticeServiceImpl implements NoticeService {
+    /**
+     * logger
+     */
+    private static final Logger log = LoggerFactory.getLogger(NoticeServiceImpl.class);
 
     @Autowired
     private DingBotService dingBotService;
@@ -35,7 +41,18 @@ public class NoticeServiceImpl implements NoticeService {
                     return new Thread(r, ((Barker)r).getThreadName());
                 }
                 return new Thread(r);
-            });
+            }) {
+        @Override
+        protected void afterExecute(Runnable r, Throwable t) {
+            super.afterExecute(r, t);
+            // 异常处理
+            if (r instanceof Barker) {
+                log.error(((Barker)r).getThreadName() + "出现异常", t);
+            } else {
+                log.error("线程异常", t);
+            }
+        }
+    };
 
     @Override
     public void start() {

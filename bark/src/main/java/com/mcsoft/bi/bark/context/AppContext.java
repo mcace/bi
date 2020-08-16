@@ -1,6 +1,7 @@
 package com.mcsoft.bi.bark.context;
 
 import com.mcsoft.bi.bark.barker.Barker;
+import com.mcsoft.bi.bark.config.AppConfig;
 import com.mcsoft.bi.bark.model.dto.BarkConfigs;
 import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
 import com.mcsoft.bi.bark.service.GitService;
@@ -21,11 +22,13 @@ public class AppContext {
 
     private final GitService gitService;
     private final BarkConfigs barkConfigs;
+    private final AppConfig appConfig;
     private final ConcurrentHashMap<SymbolBarkConfig, Barker> barkerMap = new ConcurrentHashMap<>(16);
 
-    private AppContext(GitService gitService, BarkConfigs barkConfigs) {
+    private AppContext(GitService gitService, BarkConfigs barkConfigs, AppConfig appConfig) {
         this.gitService = gitService;
         this.barkConfigs = barkConfigs;
+        this.appConfig = appConfig;
     }
 
     public static AppContext currentContext() {
@@ -52,9 +55,13 @@ public class AppContext {
         return barkerMap.remove(config);
     }
 
+    public AppConfig getAppConfig() {
+        return this.appConfig;
+    }
+
     public static class AppContextInit {
-        public static void init(GitService gitService) throws GitAPIException, IOException {
-            INSTANCE = new AppContext(gitService, gitService.pullConfig());
+        public static void init(GitService gitService, AppConfig appConfig) throws GitAPIException, IOException {
+            INSTANCE = new AppContext(gitService, gitService.pullConfig(), appConfig);
         }
     }
 

@@ -6,6 +6,9 @@ import com.mcsoft.bi.common.model.bo.AggregatePricePeriodInfo;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,6 +19,10 @@ import java.util.List;
  */
 public class AggregateTradeHandler {
 
+    public static final Comparator<AggregateTrade> TIME_COMPARATOR =
+            Comparator.comparingLong(AggregateTrade::getTime);
+
+
     public static AggregatePricePeriodInfo handle(List<AggregateTrade> trades) {
         if (CollectionUtils.isEmpty(trades)) {
             throw new CollectionEmptyException();
@@ -25,6 +32,9 @@ public class AggregateTradeHandler {
 
         info.setOpen(trades.get(0));
         info.setClose(trades.get(trades.size() - 1));
+
+        info.setStart(LocalDateTime.ofInstant(Instant.ofEpochMilli(info.getOpen().getTime()), ZoneOffset.ofHours(8)));
+        info.setEnd(LocalDateTime.ofInstant(Instant.ofEpochMilli(info.getClose().getTime()), ZoneOffset.ofHours(8)));
 
         Comparator<AggregateTrade> comparator = Comparator.comparing(AggregateTrade::getPrice, BigDecimal::compareTo);
         // 找出最高/最低
@@ -43,6 +53,10 @@ public class AggregateTradeHandler {
         info.setLow(low);
 
         return info;
+    }
+
+    public static AggregateTrade getMostRecentTrade(AggregateTrade trade1, AggregateTrade trade2) {
+        return TIME_COMPARATOR.compare(trade1, trade2) >= 0 ? trade1 : trade2;
     }
 
 }

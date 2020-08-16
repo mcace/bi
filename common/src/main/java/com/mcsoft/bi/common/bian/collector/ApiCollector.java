@@ -20,7 +20,7 @@ public interface ApiCollector {
      * @param seconds 数据时间长度
      * @return 最近N秒内的聚合交易数据
      */
-    public List<AggregateTrade> getRecentTradesBySeconds(String symbol, Integer seconds);
+    public List<AggregateTrade> getRecentAggregateTradesBySeconds(String symbol, Integer seconds);
 
     /**
      * 获取聚合交易数据

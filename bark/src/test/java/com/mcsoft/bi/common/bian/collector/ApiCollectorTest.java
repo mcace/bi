@@ -28,7 +28,7 @@ class ApiCollectorTest {
     @Test
     public void getRecentTradesBySeconds() {
         System.out.println("start:" + System.currentTimeMillis());
-        final List<AggregateTrade> recentTradesBySeconds = apiCollector.getRecentTradesBySeconds(TokenConstants.BTC_USDT, 1800);
+        final List<AggregateTrade> recentTradesBySeconds = apiCollector.getRecentAggregateTradesBySeconds(TokenConstants.BTC_USDT, 1800);
         System.out.println("end:" + System.currentTimeMillis());
         System.out.println(recentTradesBySeconds);
         final AggregatePricePeriodInfo handle = AggregateTradeHandler.handle(recentTradesBySeconds);

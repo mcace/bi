@@ -34,7 +34,7 @@ public class ApiCollectorImpl implements ApiCollector {
     }
 
     @Override
-    public List<AggregateTrade> getRecentTradesBySeconds(String symbol, Integer seconds) {
+    public List<AggregateTrade> getRecentAggregateTradesBySeconds(String symbol, Integer seconds) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = now.minusSeconds(seconds);
         return getAggregateTrades(symbol, start, now);
