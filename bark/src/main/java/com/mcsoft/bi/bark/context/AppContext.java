@@ -6,6 +6,7 @@ import com.mcsoft.bi.bark.model.dto.BarkConfigs;
 import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
 import com.mcsoft.bi.bark.service.GitService;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,11 +25,13 @@ public class AppContext {
     private final BarkConfigs barkConfigs;
     private final AppConfig appConfig;
     private final ConcurrentHashMap<SymbolBarkConfig, Barker> barkerMap = new ConcurrentHashMap<>(16);
+    private final ApplicationContext context;
 
-    private AppContext(GitService gitService, BarkConfigs barkConfigs, AppConfig appConfig) {
+    private AppContext(GitService gitService, BarkConfigs barkConfigs, AppConfig appConfig, ApplicationContext context) {
         this.gitService = gitService;
         this.barkConfigs = barkConfigs;
         this.appConfig = appConfig;
+        this.context = context;
     }
 
     public static AppContext currentContext() {
@@ -59,9 +62,13 @@ public class AppContext {
         return this.appConfig;
     }
 
+    public ApplicationContext getContext() {
+        return context;
+    }
+
     public static class AppContextInit {
-        public static void init(GitService gitService, AppConfig appConfig) throws GitAPIException, IOException {
-            INSTANCE = new AppContext(gitService, gitService.pullConfig(), appConfig);
+        public static void init(GitService gitService, AppConfig appConfig, ApplicationContext context) throws GitAPIException, IOException {
+            INSTANCE = new AppContext(gitService, gitService.pullConfig(), appConfig, context);
         }
     }
 
