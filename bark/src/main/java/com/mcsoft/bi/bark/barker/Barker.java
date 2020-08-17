@@ -27,9 +27,9 @@ public class Barker implements Runnable {
      */
     private static final Logger log = LoggerFactory.getLogger(Barker.class);
 
-    private DingBotService dingBotApi;
-    private ApiCollector apiCollector;
-    private SymbolBarkConfig config;
+    private final DingBotService dingBotApi;
+    private final ApiCollector apiCollector;
+    private final SymbolBarkConfig config;
     private volatile boolean running = true;
 
     public Barker(DingBotService dingBotService, ApiCollector apiCollector, SymbolBarkConfig config) {
@@ -85,7 +85,7 @@ public class Barker implements Runnable {
             log.debug(getThreadName() + "计算百分比起始值：{}，结束值：{}", start, end);
             // 价格变化百分比
             BigDecimal percent = start.getPrice().subtract(end.getPrice())
-                    .divide(start.getPrice(), 5, RoundingMode.HALF_UP).multiply(BigDecimal.TEN.pow(2));
+                    .divide(start.getPrice(), 7, RoundingMode.HALF_UP).multiply(BigDecimal.TEN.pow(2));
             log.debug(getThreadName() + "价格变化百分比：" + percent.toString());
             // 检测价格变动是否超过了设定阈值
             boolean doNotice = percent.abs().compareTo(config.getPercent()) >= 0;
