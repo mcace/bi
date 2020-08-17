@@ -59,10 +59,26 @@ public class Barker implements Runnable {
             List<AggregateTrade> tradesForSort = Arrays.asList(pricePeriodInfo.getHigh(), pricePeriodInfo.getLow(), end);
             tradesForSort.sort(AggregateTradeHandler.TIME_COMPARATOR);
             // 经过按时间排序后，点顺序必然为：极值1，极值2，当前点
-            // 此时比对极值2与当前点是否价格一致，价格一致则起始点为极值1，不一致则起始点为极值2
+            // 规则1.结束点===当前点
+            // 规则2.起始点根据情况决定
+            // 情况1：极值2==当前点，则起始点=极值1
             if (tradesForSort.get(1).getPrice().equals(tradesForSort.get(2).getPrice())) {
+                // 此时比对极值2与当前点是否价格一致，价格一致则起始点为极值1，不一致则起始点为极值2
                 start = tradesForSort.get(0);
-            } else {
+            }
+            // 情况2：当前点在极值1-极值2之间，起始点为价格离当前点较远的那个
+            // 判断当前点在极值1-极值2之间：(极值1-当前点)的绝对值+(极值2-当前点)的绝对值==(极值1-极值2)的绝对值
+            // tips:情况1和情况2实际上是可以合并的
+            else if (tradesForSort.get(0).getPrice().subtract(end.getPrice()).abs()
+                    .add(tradesForSort.get(1).getPrice().subtract(end.getPrice()).abs())
+                    .equals(tradesForSort.get(0).getPrice().subtract(tradesForSort.get(1).getPrice()).abs())) {
+                // 判断价格离当前点较远的极值点：(极值1-当前点)的绝对值>(极值2-当前点)的绝对值，如大于则起始点为极值1，否则起始点为极值2
+                start = tradesForSort.get(0).getPrice().subtract(end.getPrice()).abs()
+                        .compareTo(tradesForSort.get(1).getPrice().subtract(end.getPrice()).abs()) > 0 ?
+                        tradesForSort.get(0) : tradesForSort.get(1);
+            }
+            // 其他情况：起始点=极值2
+            else {
                 start = tradesForSort.get(1);
             }
 
@@ -76,11 +92,12 @@ public class Barker implements Runnable {
             try {
                 if (doNotice) {
                     String messageBuilder = config.getSymbol() + "最近" +
-                            config.getSeconds() + "秒内价格变动达到" + percent + "%。" +
-                            "当前价格：" + pricePeriodInfo.getClose().getPrice();
+                            config.getSeconds() + "秒内价格变动达到" + percent + "%，达到阈值：" + config.getPercent() + "。" +
+                            "当前价格：" + end.getPrice() + "，" +
+                            "上一极端价格：" + start.getPrice();
                     dingBotApi.sendMessageToBiGroup(messageBuilder);
                     // 如发出了通知，则至少等待一分钟后继续通知
-                    Integer waitTime = Math.max(config.getSeconds() / 3, 60);
+                    int waitTime = Math.max(config.getSeconds() / 3, 60);
                     Thread.sleep(TimeUnit.SECONDS.toMillis(waitTime));
                 } else {
                     Thread.sleep(TimeUnit.SECONDS.toMillis(AppContext.currentContext().getAppConfig().getDuration()));
