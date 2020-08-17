@@ -57,6 +57,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public void start() {
         final BarkConfigs barkConfigs = AppContext.currentContext().getBarkConfigs();
+        log.info("获取BarkConfigs：" + barkConfigs);
 
         final Set<SymbolBarkConfig> symbolBarkConfigs = barkConfigs.getSymbolBarkConfigs();
 
@@ -68,6 +69,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     public void startNewBark(SymbolBarkConfig symbolBarkConfig) {
+        log.info("准备启动barker：" + symbolBarkConfig);
         AppContext.currentContext().computeBarkerIfAbsent(symbolBarkConfig, config -> {
             Barker barker = new Barker(dingBotService, apiCollector, config);
             executor.execute(barker);
