@@ -1,14 +1,11 @@
 package com.mcsoft.bi.bark.service.impl;
 
 import com.mcsoft.bi.bark.config.BarkGitConfig;
+import com.mcsoft.bi.bark.git.GitSupport;
 import com.mcsoft.bi.bark.model.dto.BarkConfigs;
 import com.mcsoft.bi.bark.service.GitService;
 import com.mcsoft.bi.common.util.JsonUtil;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.api.AddCommand;
-import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.PullCommand;
-import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,18 +26,12 @@ public class GitServiceImpl implements GitService {
     @Autowired
     private BarkGitConfig barkGitConfig;
 
-    private final PullCommand barkPullCommand;
-    private final PushCommand barkPushCommand;
-    private final AddCommand barkAddCommand;
-    private final CommitCommand barkCommitCommand;
+    private final GitSupport gitSupport;
 
     private File barkConfigFile;
 
-    public GitServiceImpl(PullCommand barkPullCommand, PushCommand barkPushCommand, AddCommand barkAddCommand, CommitCommand barkCommitCommand) {
-        this.barkPullCommand = barkPullCommand;
-        this.barkPushCommand = barkPushCommand;
-        this.barkAddCommand = barkAddCommand;
-        this.barkCommitCommand = barkCommitCommand;
+    public GitServiceImpl(GitSupport gitSupport) {
+        this.gitSupport = gitSupport;
     }
 
     @PostConstruct
@@ -53,7 +44,7 @@ public class GitServiceImpl implements GitService {
 
     @Override
     public BarkConfigs pullConfig() throws GitAPIException, IOException {
-        barkPullCommand.call();
+        gitSupport.newPullCommand().call();
         final String config = FileUtils.readFileToString(barkConfigFile, StandardCharsets.UTF_8);
         return JsonUtil.readValue(config, BarkConfigs.class);
     }
@@ -62,8 +53,9 @@ public class GitServiceImpl implements GitService {
     public void pushConfig(BarkConfigs configs) throws GitAPIException, IOException {
         final String configJson = JsonUtil.writeToJson(configs);
         FileUtils.writeStringToFile(barkConfigFile, configJson, StandardCharsets.UTF_8);
-        barkCommitCommand.setMessage("update config").call();
-        barkPushCommand.call();
+        gitSupport.newAddCommand().call();
+        gitSupport.newCommitCommand().setMessage("update config").call();
+        gitSupport.newPushCommand().call();
     }
 
 }

@@ -1,11 +1,16 @@
 package com.mcsoft.bi.bark.config;
 
+import com.mcsoft.bi.bark.context.AppContext;
+import com.mcsoft.bi.bark.git.GitSupport;
 import lombok.Data;
-import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,17 +29,39 @@ import java.io.IOException;
 @Data
 public class BarkGitConfig {
 
+    /**
+     * logger
+     */
+    private static final Logger log = LoggerFactory.getLogger(BarkGitConfig.class);
+
     private String repoName;
     private String barkHost;
     private String barkConfigFileName;
     private String repoPath;
-    private String username;
-    private String password;
+    private String lock;
+    private String time;
     private String barkConfigFilePath;
 
     @PostConstruct
-    public void init() {
+    public void init() throws GitAPIException, IOException {
         this.barkConfigFilePath = this.repoPath + File.separator + repoName + File.separator + barkConfigFileName;
+        // 启动时强制与远程分支同步
+        gitSupport().newAddCommand().call();
+        barkGit().reset().setMode(ResetCommand.ResetType.HARD).call();
+        barkGit().pull().setCredentialsProvider(provider()).call();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                log.info("系统退出，准备保存BarkConfigs");
+                AppContext.currentContext().saveBarkConfigs();
+            } catch (GitAPIException | IOException e) {
+                log.error("退出时保存配置错误", e);
+            }
+        }));
+    }
+
+    @Bean
+    public CredentialsProvider provider() {
+        return new UsernamePasswordCredentialsProvider(lock, time);
     }
 
     @Bean
@@ -42,43 +69,22 @@ public class BarkGitConfig {
         String realRepoPath = repoPath + File.separator + repoName;
         File realRepoFile = new File(realRepoPath);
 
-        CredentialsProvider provider = new UsernamePasswordCredentialsProvider(username, password);
         try {
             return Git.open(realRepoFile);
         } catch (RepositoryNotFoundException e) {
-            return Git.cloneRepository().setURI(barkHost).setDirectory(new File(realRepoPath)).setCredentialsProvider(provider).call();
+            if (realRepoFile.exists() && !realRepoFile.delete()) {
+                log.error("init bark git config failed, repo file not exists and could not be able to clear directory");
+                System.exit(0);
+                return null;
+            } else {
+                return Git.cloneRepository().setURI(barkHost).setDirectory(realRepoFile).setCredentialsProvider(provider()).call();
+            }
         }
     }
 
     @Bean
-    public PullCommand barkPullCommand() throws GitAPIException, IOException {
-        CredentialsProvider provider = new UsernamePasswordCredentialsProvider(username, password);
-        final PullCommand pullCommand = barkGit().pull().setCredentialsProvider(provider);
-        pullCommand.call();
-        return pullCommand;
-    }
-
-    @Bean
-    public PushCommand barkPushCommand() throws GitAPIException, IOException {
-        CredentialsProvider provider = new UsernamePasswordCredentialsProvider(username, password);
-        final PushCommand pushCommand = barkGit().push().setCredentialsProvider(provider);
-        pushCommand.call();
-        return pushCommand;
-    }
-
-    @Bean
-    public AddCommand barkAddCommand() throws GitAPIException, IOException {
-        final AddCommand addCommand = barkGit().add().addFilepattern(".");
-        addCommand.call();
-        return addCommand;
-    }
-
-    @Bean
-    public CommitCommand barkCommitCommand() throws GitAPIException, IOException {
-        CredentialsProvider provider = new UsernamePasswordCredentialsProvider(username, password);
-        final CommitCommand commitCommand = barkGit().commit();
-        commitCommand.setCredentialsProvider(provider);
-        return commitCommand;
+    public GitSupport gitSupport() throws GitAPIException, IOException {
+        return new GitSupport(barkGit(), provider());
     }
 
 }

@@ -5,7 +5,6 @@ import com.mcsoft.bi.bark.service.GitService;
 import lombok.Data;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -25,8 +24,12 @@ import java.io.IOException;
 @Data
 public class AppConfig implements ApplicationContextAware {
 
-    @Autowired
     private GitService gitService;
+
+    public AppConfig(GitService gitService) {
+        this.gitService = gitService;
+    }
+
     private ApplicationContext context;
 
     private Long duration;
