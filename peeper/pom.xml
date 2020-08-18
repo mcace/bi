@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>peeker</artifactId>
+    <artifactId>peeper</artifactId>
     <description>分析工具</description>
 
 

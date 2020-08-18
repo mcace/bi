@@ -69,18 +69,25 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     public void startNewBark(SymbolBarkConfig symbolBarkConfig) {
-        log.info("准备启动barker：" + symbolBarkConfig);
         AppContext.currentContext().computeBarkerIfAbsent(symbolBarkConfig, config -> {
+            log.info("准备启动barker：" + config);
             Barker barker = new Barker(dingBotService, apiCollector, config);
             executor.execute(barker);
+            log.info("barker：" + config + "启动完成");
             return barker;
         });
     }
 
     @Override
     public void removeBark(SymbolBarkConfig symbolBarkConfig) {
+        log.info("准备移除barker：" + symbolBarkConfig);
         final Barker barker = AppContext.currentContext().removeBarker(symbolBarkConfig);
-        barker.shutdown();
+        if (null != barker) {
+            barker.shutdown();
+            log.info("barker：" + symbolBarkConfig + "移除完成");
+        } else {
+            log.info("barker：" + symbolBarkConfig + "不存在，无法移除");
+        }
     }
 
 }

@@ -46,6 +46,14 @@ public class AppContext {
         gitService.pushConfig(barkConfigs);
     }
 
+    public void addBarkConfig(SymbolBarkConfig config) {
+        this.getBarkConfigs().getSymbolBarkConfigs().add(config);
+    }
+
+    public void removeBarkConfig(SymbolBarkConfig config) {
+        this.getBarkConfigs().getSymbolBarkConfigs().remove(config);
+    }
+
     public void computeBarkerIfAbsent(SymbolBarkConfig config, Function<? super SymbolBarkConfig, ? extends Barker> mappingFunction) {
         barkerMap.computeIfAbsent(config, mappingFunction);
     }

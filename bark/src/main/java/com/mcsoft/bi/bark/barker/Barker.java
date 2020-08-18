@@ -84,15 +84,16 @@ public class Barker implements Runnable {
 
             log.debug(getThreadName() + "计算百分比起始值：{}，结束值：{}", start, end);
             // 价格变化百分比
-            BigDecimal percent = start.getPrice().subtract(end.getPrice())
+            BigDecimal percent = end.getPrice().subtract(start.getPrice())
                     .divide(start.getPrice(), 7, RoundingMode.HALF_UP).multiply(BigDecimal.TEN.pow(2));
             log.debug(getThreadName() + "价格变化百分比：" + percent.toString());
             // 检测价格变动是否超过了设定阈值
             boolean doNotice = percent.abs().compareTo(config.getPercent()) >= 0;
             try {
                 if (doNotice) {
+                    log.info(getThreadName() + "价格变化百分比：" + percent.toString() + "，准备进行通知");
                     String messageBuilder = config.getSymbol() + "最近" +
-                            config.getSeconds() + "秒内价格变动达到" + percent + "%，达到阈值：" + config.getPercent() + "。" +
+                            config.getSeconds() + "秒内价格变动达到" + percent.setScale(4, RoundingMode.HALF_UP) + "%，达到阈值：" + config.getPercent() + "。" +
                             "当前价格：" + end.getPrice() + "，" +
                             "上一极端价格：" + start.getPrice();
                     dingBotApi.sendMessageToBiGroup(messageBuilder);

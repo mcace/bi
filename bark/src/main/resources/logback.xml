@@ -20,7 +20,7 @@
 
         <!--%black", "%red", "%green","%yellow","%blue", "%magenta","%cyan", "%white", "%gray", "%boldRed","%boldGreen", "%boldYellow", "%boldBlue", "%boldMagenta""%boldCyan", "%boldWhite-->
         <encoder>
-            <pattern>[%yellow(%d{yyyy-MM-dd HH:mm:ss})] [%blue(%thread)] [%highlight(%level)] [%cyan(%logger)] - [%black(%msg)]%n</pattern>
+            <pattern>[%yellow(%d{yyyy-MM-dd HH:mm:ss})] [%blue(%thread)] [%highlight(%level)] [%cyan(%logger)] - [%white(%msg)]%n</pattern>
             <charset>UTF-8</charset><!-- 此处设置字符集 -->
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
