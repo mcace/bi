@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提示配置列表</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th>Symbol</th>
+        <th>Duration</th>
+        <th>Percent</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="config: ${configs}">
+        <td th:text="${config.symbol}"></td>
+        <td th:text="${config.seconds}"></td>
+        <td th:text="${config.percent}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
