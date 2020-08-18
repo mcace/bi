@@ -3,10 +3,10 @@ package com.mcsoft.bi.common.bian.config;
 import com.binance.client.impl.RestApiInvoker;
 import com.mcsoft.bi.common.bian.collector.ApiCollector;
 import com.mcsoft.bi.common.bian.collector.ApiCollectorImpl;
-import com.mcsoft.bi.common.bian.constants.ApiConstants;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,10 +26,14 @@ public class ApiConfiguration {
 
     @Autowired
     private ProxyConfig proxyConfig;
+    @Value("${bi.api.key}")
+    private String apiKey;
+    @Value("${bi.api.secret}")
+    private String apiSecret;
 
     @Bean
     public ApiCollector apiCollector() {
-        return new ApiCollectorImpl(ApiConstants.API_KEY, ApiConstants.API_SECRET);
+        return new ApiCollectorImpl(apiKey, apiSecret);
     }
 
     @PostConstruct
