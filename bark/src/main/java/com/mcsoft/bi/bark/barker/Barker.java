@@ -95,7 +95,8 @@ public class Barker implements Runnable {
                 if (doNotice) {
                     log.info(getThreadName() + "价格变化百分比：" + percent.toString() + "，准备进行通知");
                     String messageBuilder = config.getSymbol() + "最近" +
-                            config.getSeconds() + "秒内价格变动达到" + percent.setScale(4, RoundingMode.HALF_UP) + "%，达到阈值：" + config.getPercent() + "。" +
+                            config.getSeconds() + "秒内价格变动达到" + percent.setScale(4, RoundingMode.HALF_UP) + "%，" +
+                            "达到阈值：" + config.getPercent() + "%。" +
                             "当前价格：" + end.getPrice() + "，" +
                             "上一极端价格：" + start.getPrice();
                     dingBotApi.sendMessageToBiGroup(messageBuilder);

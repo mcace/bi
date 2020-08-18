@@ -5,6 +5,7 @@ import com.binance.client.SyncRequestClient;
 import com.binance.client.impl.BinanceApiInternalFactory;
 import com.binance.client.model.market.AggregateTrade;
 import com.mcsoft.bi.common.bian.constants.ApiConstants;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,9 @@ public class ApiCollectorImpl implements ApiCollector {
         // 循环处理未取完数据
         while (null == aggregateTrades || aggregateTrades.size() == ApiConstants.AGGREGATE_COUNT) {
             aggregateTrades = syncRequestClient.getAggregateTrades(symbol, fromId, startTime, endTime, ApiConstants.AGGREGATE_COUNT);
+            if (CollectionUtils.isEmpty(aggregateTrades)) {
+                break;
+            }
             result.addAll(aggregateTrades);
             // 如未取完，则从最后一条继续取
             fromId = aggregateTrades.get(aggregateTrades.size() - 1).getId() + 1;
