@@ -24,7 +24,7 @@
             <charset>UTF-8</charset><!-- 此处设置字符集 -->
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
+            <level>INFO</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
