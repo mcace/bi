@@ -2,6 +2,7 @@ package com.mcsoft.bi.bark.config;
 
 import com.mcsoft.bi.bark.context.AppContext;
 import com.mcsoft.bi.bark.service.GitService;
+import com.mcsoft.bi.bark.service.NoticeService;
 import lombok.Data;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.BeansException;
@@ -24,9 +25,11 @@ import java.io.IOException;
 @Data
 public class AppConfig implements ApplicationContextAware {
 
+    private NoticeService noticeService;
     private GitService gitService;
 
-    public AppConfig(GitService gitService) {
+    public AppConfig(NoticeService noticeService, GitService gitService) {
+        this.noticeService = noticeService;
         this.gitService = gitService;
     }
 
@@ -36,7 +39,7 @@ public class AppConfig implements ApplicationContextAware {
 
     @PostConstruct
     public void init() throws GitAPIException, IOException {
-        AppContext.AppContextInit.init(gitService, this, context);
+        AppContext.AppContextInit.init(noticeService, gitService, this, context);
     }
 
     @Override

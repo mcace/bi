@@ -23,10 +23,8 @@
             <pattern>[%yellow(%d{yyyy-MM-dd HH:mm:ss})] [%blue(%thread)] [%highlight(%level)] [%cyan(%logger)] - [%white(%msg)]%n</pattern>
             <charset>UTF-8</charset><!-- 此处设置字符集 -->
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
         </filter>
     </appender>
 
