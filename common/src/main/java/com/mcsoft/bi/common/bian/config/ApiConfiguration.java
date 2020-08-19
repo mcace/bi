@@ -1,8 +1,8 @@
 package com.mcsoft.bi.common.bian.config;
 
 import com.binance.client.impl.RestApiInvoker;
-import com.mcsoft.bi.common.bian.collector.ApiCollector;
-import com.mcsoft.bi.common.bian.collector.ApiCollectorImpl;
+import com.mcsoft.bi.common.bian.api.ApiCollector;
+import com.mcsoft.bi.common.bian.api.ApiCollectorImpl;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

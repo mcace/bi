@@ -1,4 +1,4 @@
-package com.mcsoft.bi.common.bian.collector;
+package com.mcsoft.bi.common.bian.api;
 
 import com.binance.client.model.market.AggregateTrade;
 

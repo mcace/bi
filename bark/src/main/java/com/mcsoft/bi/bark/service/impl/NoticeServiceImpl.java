@@ -6,7 +6,7 @@ import com.mcsoft.bi.bark.model.dto.BarkConfigs;
 import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
 import com.mcsoft.bi.bark.service.DingBotService;
 import com.mcsoft.bi.bark.service.NoticeService;
-import com.mcsoft.bi.common.bian.collector.ApiCollector;
+import com.mcsoft.bi.common.bian.api.ApiCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
