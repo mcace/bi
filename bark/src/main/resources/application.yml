@@ -10,7 +10,7 @@ bi:
       repo-name: bi-config
       bark-host: https://github.com/supermc90/bi-config.git
       bark-config-file-name: bi-config.json
-      repo-path: /tmp/jgit/repo
+      repo-path: /etc/jgit/repo
   bark:
     duration: 5 # 每次轮询间隔时间（s）
 spring:
