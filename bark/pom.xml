@@ -12,6 +12,10 @@
     <artifactId>bark</artifactId>
     <description>提示币价的小工具</description>
 
+    <properties>
+        <bark.outputDirectory>/Users/supermc/Documents/apps/bark</bark.outputDirectory>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -42,7 +46,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <outputDirectory>
-                        /Users/supermc/Documents/apps/bark
+                        ${bark.outputDirectory}
                     </outputDirectory>
                 </configuration>
             </plugin>
