@@ -28,6 +28,7 @@
         </filter>
     </appender>
 
+    <![CDATA[    取消全部文件类型日志（防止EC2免费额度用完）
 
     <!-- ERROR级别日志 -->
     <!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 RollingFileAppender-->
@@ -63,7 +64,6 @@
             <charset>UTF-8</charset><!-- 此处设置字符集 -->
         </encoder>
     </appender>
-
 
     <!-- WARN级别日志 appender -->
     <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -166,6 +166,9 @@
         <!-- 添加附加的appender,最多只能添加一个 -->
         <appender-ref ref="ERROR"/>
     </appender>
+
+    ]]>
+
 
     <logger name="java.sql.PreparedStatement" value="DEBUG"/>
     <logger name="java.sql.Connection" value="DEBUG"/>
