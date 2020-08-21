@@ -36,7 +36,7 @@ public class NoticeServiceImpl implements NoticeService {
     private ApiCollector apiCollector;
 
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2,
-            ThreadPoolConstants.MAXIMUM_POOL_SIZE, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(16),
+            ThreadPoolConstants.MAXIMUM_POOL_SIZE, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(128),
             r -> {
                 if (r instanceof Barker) {
                     return new Thread(r, ((Barker)r).getThreadName());
