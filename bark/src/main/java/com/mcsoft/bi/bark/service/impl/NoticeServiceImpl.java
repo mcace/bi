@@ -41,13 +41,7 @@ public class NoticeServiceImpl implements NoticeService {
                     return new Thread(r, ((Barker)r).getThreadName());
                 }
                 return new Thread(r);
-            }, (r, executor) -> {
-        if (r instanceof Barker) {
-            log.info(((Barker)r).getThreadName() + "启动被丢弃");
-        } else {
-            log.info(r + "启动被丢弃");
-        }
-    }) {
+            }) {
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
             super.afterExecute(r, t);
