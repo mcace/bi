@@ -70,11 +70,16 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public void startNewBark(SymbolBarkConfig symbolBarkConfig) {
         AppContext.currentContext().computeBarkerIfAbsent(symbolBarkConfig, config -> {
-            log.info("准备启动barker：" + config);
-            Barker barker = new Barker(dingBotService, apiCollector, config);
-            executor.execute(barker);
-            log.info("barker：" + config + "启动完成");
-            return barker;
+            try {
+                log.info("准备启动barker：" + config);
+                Barker barker = new Barker(dingBotService, apiCollector, config);
+                executor.execute(barker);
+                log.info("barker：" + config + "启动完成");
+                return barker;
+            } catch (Exception ex) {
+                log.error("启动barker" + config + "失败", ex);
+                throw ex;
+            }
         });
     }
 
