@@ -44,7 +44,7 @@ public class Barker implements Runnable {
 
     @Override
     public void run() {
-        log.info(Thread.currentThread().getName() + "，config：" + config + "启动完成");
+        log.info("barker：" + config + "启动完成");
         while (running) {
             // 至少等待一分钟
             long loopWaitSeconds = AppContext.currentContext().getAppConfig().getDuration();
@@ -115,7 +115,7 @@ public class Barker implements Runnable {
                 }
             }
         }
-        log.info(Thread.currentThread().getName() + "，config：" + config + "终止完成");
+        log.info("barker：" + config + "终止完成");
     }
 
     public void shutdown() {

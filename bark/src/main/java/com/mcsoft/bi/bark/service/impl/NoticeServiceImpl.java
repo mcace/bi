@@ -75,7 +75,7 @@ public class NoticeServiceImpl implements NoticeService {
                 log.info("准备启动barker：" + config);
                 Barker barker = new Barker(dingBotService, apiCollector, config);
                 executor.execute(barker);
-                log.info("barker：" + config + "启动完成");
+                //启动完成的日志在Barker.run()中打印
                 return barker;
             } catch (Exception ex) {
                 log.error("启动barker" + config + "失败", ex);
