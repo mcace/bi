@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +36,7 @@ public class NoticeServiceImpl implements NoticeService {
     private ApiCollector apiCollector;
 
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2,
-            ThreadPoolConstants.MAXIMUM_POOL_SIZE, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(128),
+            ThreadPoolConstants.MAXIMUM_POOL_SIZE, 1, TimeUnit.SECONDS, new SynchronousQueue<>(),
             r -> {
                 if (r instanceof Barker) {
                     return new Thread(r, ((Barker)r).getThreadName());
