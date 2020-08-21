@@ -28,8 +28,6 @@
         </filter>
     </appender>
 
-    <![CDATA[    取消全部文件类型日志（防止EC2免费额度用完）
-
     <!-- ERROR级别日志 -->
     <!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 RollingFileAppender-->
     <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -48,43 +46,11 @@
             <maxHistory>${maxHistory}</maxHistory>
         </rollingPolicy>
 
-        <!-- 按照固定窗口模式生成日志文件，当文件大于20MB时，生成新的日志文件。窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志。
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-          <fileNamePattern>${log_dir}/%d{yyyy-MM-dd}/.log.zip</fileNamePattern>
-          <minIndex>1</minIndex>
-          <maxIndex>3</maxIndex>
-        </rollingPolicy> -->
-        <!-- 查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender 触发当前活动文件滚动
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>5MB</maxFileSize>
-        </triggeringPolicy>   -->
-
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
             <charset>UTF-8</charset><!-- 此处设置字符集 -->
         </encoder>
     </appender>
-
-    <!-- WARN级别日志 appender -->
-    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 过滤器，只记录WARN级别的日志 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 按天回滚 daily -->
-            <fileNamePattern>${log_dir}/%d{yyyy-MM-dd}/warn-log.log
-            </fileNamePattern>
-            <maxHistory>${maxHistory}</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
-            <charset>UTF-8</charset><!-- 此处设置字符集 -->
-        </encoder>
-    </appender>
-
 
     <!-- INFO级别日志 appender -->
     <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -106,7 +72,6 @@
         </encoder>
     </appender>
 
-
     <!-- DEBUG级别日志 appender -->
     <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 过滤器，只记录DEBUG级别的日志 -->
@@ -127,6 +92,28 @@
         </encoder>
     </appender>
 
+    <![CDATA[    取消全部文件类型日志（防止EC2免费额度用完）
+
+
+    <!-- WARN级别日志 appender -->
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 过滤器，只记录WARN级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <fileNamePattern>${log_dir}/%d{yyyy-MM-dd}/warn-log.log
+            </fileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+            <charset>UTF-8</charset><!-- 此处设置字符集 -->
+        </encoder>
+    </appender>
 
     <!-- TRACE级别日志 appender -->
     <appender name="TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -185,7 +172,7 @@
 <!--        <appender-ref ref="ERROR"/>-->
 <!--        <appender-ref ref="INFO"/>-->
 <!--        <appender-ref ref="WARN"/>-->
-<!--        <appender-ref ref="DEBUG"/>-->
+        <appender-ref ref="DEBUG"/>
 <!--        <appender-ref ref="TRACE"/>-->
     </root>
 
