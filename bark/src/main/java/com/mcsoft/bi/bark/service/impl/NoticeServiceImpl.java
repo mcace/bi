@@ -1,6 +1,7 @@
 package com.mcsoft.bi.bark.service.impl;
 
 import com.mcsoft.bi.bark.barker.Barker;
+import com.mcsoft.bi.bark.constants.ThreadPoolConstants;
 import com.mcsoft.bi.bark.context.AppContext;
 import com.mcsoft.bi.bark.model.dto.BarkConfigs;
 import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
@@ -35,7 +36,7 @@ public class NoticeServiceImpl implements NoticeService {
     private ApiCollector apiCollector;
 
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2,
-            Runtime.getRuntime().availableProcessors() * 2, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(16),
+            ThreadPoolConstants.MAXIMUM_POOL_SIZE, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(16),
             r -> {
                 if (r instanceof Barker) {
                     return new Thread(r, ((Barker)r).getThreadName());
