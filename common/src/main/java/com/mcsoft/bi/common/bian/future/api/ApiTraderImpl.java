@@ -1,4 +1,4 @@
-package com.mcsoft.bi.common.bian.api;
+package com.mcsoft.bi.common.bian.future.api;
 
 import com.binance.client.RequestOptions;
 import com.binance.client.SyncRequestClient;

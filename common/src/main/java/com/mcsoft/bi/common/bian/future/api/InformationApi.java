@@ -1,4 +1,4 @@
-package com.mcsoft.bi.common.bian.api;
+package com.mcsoft.bi.common.bian.future.api;
 
 import com.binance.client.model.trade.AccountInformation;
 import com.binance.client.model.trade.Order;
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author MC
  */
-public interface TradeApi {
+public interface InformationApi {
 
     /**
      * 获取账户信息

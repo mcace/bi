@@ -1,4 +1,4 @@
-package com.mcsoft.bi.common.bian.api;
+package com.mcsoft.bi.common.bian.future.api;
 
 import com.binance.client.RequestOptions;
 import com.binance.client.SyncRequestClient;
@@ -17,15 +17,15 @@ import java.util.List;
  *
  * @author MC
  */
-public class TradeApiImpl implements TradeApi {
+public class InformationApiImpl implements InformationApi {
     /**
      * logger
      */
-    private static final Logger log = LoggerFactory.getLogger(TradeApiImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(InformationApiImpl.class);
 
     private final SyncRequestClient syncRequestClient;
 
-    public TradeApiImpl(String apiKey, String apiSecret) {
+    public InformationApiImpl(String apiKey, String apiSecret) {
         this.syncRequestClient = BinanceApiInternalFactory.getInstance().createSyncRequestClient(
                 apiKey,
                 apiSecret, new RequestOptions()
@@ -39,8 +39,8 @@ public class TradeApiImpl implements TradeApi {
 
     @Override
     public List<Order> getAllOrders(String symbol, Long orderId, LocalDateTime startTime, LocalDateTime endTime, Integer limit) {
-        final long startTimeLong = startTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
-        final long endTimeLong = endTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        final Long startTimeLong = startTime == null ? null : startTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        final Long endTimeLong = endTime == null ? null : endTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
         return syncRequestClient.getAllOrders(symbol, orderId, startTimeLong, endTimeLong, limit);
     }
 

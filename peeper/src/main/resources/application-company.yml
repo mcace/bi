@@ -1,0 +1,5 @@
+bi:
+  proxy:
+    host: 127.0.0.1
+    port: 1089
+    type: SOCKS

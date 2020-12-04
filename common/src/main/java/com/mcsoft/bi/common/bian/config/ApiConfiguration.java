@@ -1,10 +1,10 @@
 package com.mcsoft.bi.common.bian.config;
 
 import com.binance.client.impl.RestApiInvoker;
-import com.mcsoft.bi.common.bian.api.ApiCollector;
-import com.mcsoft.bi.common.bian.api.ApiCollectorImpl;
-import com.mcsoft.bi.common.bian.api.TradeApi;
-import com.mcsoft.bi.common.bian.api.TradeApiImpl;
+import com.mcsoft.bi.common.bian.future.api.ApiCollector;
+import com.mcsoft.bi.common.bian.future.api.ApiCollectorImpl;
+import com.mcsoft.bi.common.bian.future.api.InformationApi;
+import com.mcsoft.bi.common.bian.future.api.InformationApiImpl;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +39,8 @@ public class ApiConfiguration {
     }
 
     @Bean
-    public TradeApi tradeApi() {
-        return new TradeApiImpl(apiKey, apiSecret);
+    public InformationApi tradeApi() {
+        return new InformationApiImpl(apiKey, apiSecret);
     }
 
     @PostConstruct

@@ -4,7 +4,7 @@ import com.binance.client.model.market.AggregateTrade;
 import com.mcsoft.bi.bark.context.AppContext;
 import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
 import com.mcsoft.bi.bark.service.DingBotService;
-import com.mcsoft.bi.common.bian.api.ApiCollector;
+import com.mcsoft.bi.common.bian.future.api.ApiCollector;
 import com.mcsoft.bi.common.model.bo.AggregatePricePeriodInfo;
 import com.mcsoft.bi.common.util.AggregateTradeHandler;
 import org.slf4j.Logger;

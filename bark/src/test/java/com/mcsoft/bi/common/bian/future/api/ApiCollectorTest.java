@@ -1,4 +1,4 @@
-package com.mcsoft.bi.common.bian.api;
+package com.mcsoft.bi.common.bian.future.api;
 
 import com.binance.client.model.market.AggregateTrade;
 import com.mcsoft.bi.bark.BarkApplication;

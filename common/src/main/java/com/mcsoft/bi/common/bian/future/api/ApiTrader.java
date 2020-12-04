@@ -1,4 +1,4 @@
-package com.mcsoft.bi.common.bian.api;
+package com.mcsoft.bi.common.bian.future.api;
 
 /**
  * 币安接口服务
