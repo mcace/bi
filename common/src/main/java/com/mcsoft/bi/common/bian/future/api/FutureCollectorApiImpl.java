@@ -19,15 +19,15 @@ import java.util.List;
  *
  * @author MC
  */
-public class ApiCollectorImpl implements ApiCollector {
+public class FutureCollectorApiImpl implements FutureCollectorApi {
     /**
      * logger
      */
-    private static final Logger log = LoggerFactory.getLogger(ApiCollectorImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(FutureCollectorApiImpl.class);
 
     private final SyncRequestClient syncRequestClient;
 
-    public ApiCollectorImpl(String apiKey, String apiSecret) {
+    public FutureCollectorApiImpl(String apiKey, String apiSecret) {
         this.syncRequestClient = BinanceApiInternalFactory.getInstance().createSyncRequestClient(
                 apiKey,
                 apiSecret, new RequestOptions()

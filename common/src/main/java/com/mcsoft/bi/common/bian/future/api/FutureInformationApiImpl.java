@@ -17,15 +17,15 @@ import java.util.List;
  *
  * @author MC
  */
-public class InformationApiImpl implements InformationApi {
+public class FutureInformationApiImpl implements FutureInformationApi {
     /**
      * logger
      */
-    private static final Logger log = LoggerFactory.getLogger(InformationApiImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(FutureInformationApiImpl.class);
 
     private final SyncRequestClient syncRequestClient;
 
-    public InformationApiImpl(String apiKey, String apiSecret) {
+    public FutureInformationApiImpl(String apiKey, String apiSecret) {
         this.syncRequestClient = BinanceApiInternalFactory.getInstance().createSyncRequestClient(
                 apiKey,
                 apiSecret, new RequestOptions()

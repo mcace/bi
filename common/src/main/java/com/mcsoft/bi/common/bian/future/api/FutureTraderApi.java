@@ -6,7 +6,7 @@ package com.mcsoft.bi.common.bian.future.api;
  *
  * @author MC
  */
-public interface ApiTrader {
+public interface FutureTraderApi {
 
     /**
      * 限价单

@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 现货/交易账户信息
+ * 合约账户信息
  * Created by MC on 2020/11/27.
  *
  * @author MC
  */
-public interface InformationApi {
+public interface FutureInformationApi {
 
     /**
      * 获取账户信息
@@ -22,7 +22,7 @@ public interface InformationApi {
     AccountInformation getAccountInformation();
 
     /**
-     * 获取所有交易记录
+     * 获取所有合约交易记录
      *  @param symbol    交易对（e.g ALGOUSDT），必传
      * @param orderId   起始订单id，类似游标，选传
      * @param startTime 查询起始时间，选传

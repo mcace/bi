@@ -1,12 +1,16 @@
 package com.mcsoft.bi.common.bian.config;
 
 import com.binance.client.impl.RestApiInvoker;
-import com.mcsoft.bi.common.bian.future.api.ApiCollector;
-import com.mcsoft.bi.common.bian.future.api.ApiCollectorImpl;
-import com.mcsoft.bi.common.bian.future.api.InformationApi;
-import com.mcsoft.bi.common.bian.future.api.InformationApiImpl;
+import com.mcsoft.bi.common.bian.future.api.FutureCollectorApi;
+import com.mcsoft.bi.common.bian.future.api.FutureCollectorApiImpl;
+import com.mcsoft.bi.common.bian.future.api.FutureInformationApi;
+import com.mcsoft.bi.common.bian.future.api.FutureInformationApiImpl;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import org.knowm.xchange.Exchange;
+import org.knowm.xchange.ExchangeFactory;
+import org.knowm.xchange.ExchangeSpecification;
+import org.knowm.xchange.binance.BinanceExchange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -34,13 +38,29 @@ public class ApiConfiguration {
     private String apiSecret;
 
     @Bean
-    public ApiCollector apiCollector() {
-        return new ApiCollectorImpl(apiKey, apiSecret);
+    public FutureCollectorApi apiCollector() {
+        return new FutureCollectorApiImpl(apiKey, apiSecret);
     }
 
     @Bean
-    public InformationApi tradeApi() {
-        return new InformationApiImpl(apiKey, apiSecret);
+    public FutureInformationApi tradeApi() {
+        return new FutureInformationApiImpl(apiKey, apiSecret);
+    }
+
+    @Bean
+    public Exchange binanceExchange(){
+        final ExchangeSpecification defaultExchangeSpecification = new BinanceExchange().getDefaultExchangeSpecification();
+        defaultExchangeSpecification.setApiKey(apiKey);
+        defaultExchangeSpecification.setSecretKey(apiSecret);
+        setProxy(defaultExchangeSpecification);
+        return ExchangeFactory.INSTANCE.createExchange(defaultExchangeSpecification);
+    }
+
+    private void setProxy(ExchangeSpecification defaultExchangeSpecification) {
+        if (StringUtils.isNotBlank(proxyConfig.getHost())) {
+            defaultExchangeSpecification.setProxyHost(proxyConfig.getHost());
+            defaultExchangeSpecification.setProxyPort(proxyConfig.getPort());
+        }
     }
 
     @PostConstruct

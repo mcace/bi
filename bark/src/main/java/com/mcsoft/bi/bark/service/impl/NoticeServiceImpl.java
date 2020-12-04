@@ -7,7 +7,7 @@ import com.mcsoft.bi.bark.model.dto.BarkConfigs;
 import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
 import com.mcsoft.bi.bark.service.DingBotService;
 import com.mcsoft.bi.bark.service.NoticeService;
-import com.mcsoft.bi.common.bian.future.api.ApiCollector;
+import com.mcsoft.bi.common.bian.future.api.FutureCollectorApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Autowired
     private DingBotService dingBotService;
     @Autowired
-    private ApiCollector apiCollector;
+    private FutureCollectorApi futureCollectorApi;
 
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2,
             ThreadPoolConstants.MAXIMUM_POOL_SIZE, 1, TimeUnit.SECONDS, new SynchronousQueue<>(),
@@ -73,7 +73,7 @@ public class NoticeServiceImpl implements NoticeService {
         AppContext.currentContext().computeBarkerIfAbsent(symbolBarkConfig, config -> {
             try {
                 log.info("准备启动barker：" + config);
-                Barker barker = new Barker(dingBotService, apiCollector, config);
+                Barker barker = new Barker(dingBotService, futureCollectorApi, config);
                 executor.execute(barker);
                 //启动完成的日志在Barker.run()中打印
                 return barker;

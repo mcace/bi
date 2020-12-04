@@ -20,15 +20,15 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BarkApplication.class)
-class ApiCollectorTest {
+class FutureCollectorApiTest {
 
     @Autowired
-    private ApiCollector apiCollector;
+    private FutureCollectorApi futureCollectorApi;
 
     @Test
     public void getRecentTradesBySeconds() {
         System.out.println("start:" + System.currentTimeMillis());
-        final List<AggregateTrade> recentTradesBySeconds = apiCollector.getRecentAggregateTradesBySeconds(TokenConstants.BTC_USDT, 1800);
+        final List<AggregateTrade> recentTradesBySeconds = futureCollectorApi.getRecentAggregateTradesBySeconds(TokenConstants.BTC_USDT, 1800);
         System.out.println("end:" + System.currentTimeMillis());
         System.out.println(recentTradesBySeconds);
         final AggregatePricePeriodInfo handle = AggregateTradeHandler.handle(recentTradesBySeconds);

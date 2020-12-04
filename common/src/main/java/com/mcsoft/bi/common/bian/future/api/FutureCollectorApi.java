@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author MC
  */
-public interface ApiCollector {
+public interface FutureCollectorApi {
 
     /**
      * 获取最近N秒内的聚合交易数据

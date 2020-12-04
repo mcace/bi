@@ -4,7 +4,7 @@ import com.binance.client.model.market.AggregateTrade;
 import com.mcsoft.bi.bark.context.AppContext;
 import com.mcsoft.bi.bark.model.dto.SymbolBarkConfig;
 import com.mcsoft.bi.bark.service.DingBotService;
-import com.mcsoft.bi.common.bian.future.api.ApiCollector;
+import com.mcsoft.bi.common.bian.future.api.FutureCollectorApi;
 import com.mcsoft.bi.common.model.bo.AggregatePricePeriodInfo;
 import com.mcsoft.bi.common.util.AggregateTradeHandler;
 import org.slf4j.Logger;
@@ -28,13 +28,13 @@ public class Barker implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(Barker.class);
 
     private final DingBotService dingBotApi;
-    private final ApiCollector apiCollector;
+    private final FutureCollectorApi futureCollectorApi;
     private final SymbolBarkConfig config;
     private volatile boolean running = true;
 
-    public Barker(DingBotService dingBotService, ApiCollector apiCollector, SymbolBarkConfig config) {
+    public Barker(DingBotService dingBotService, FutureCollectorApi futureCollectorApi, SymbolBarkConfig config) {
         this.dingBotApi = dingBotService;
-        this.apiCollector = apiCollector;
+        this.futureCollectorApi = futureCollectorApi;
         this.config = config;
     }
 
@@ -51,7 +51,7 @@ public class Barker implements Runnable {
             try {
                 // 核心逻辑
                 // 取出最近交易数据
-                List<AggregateTrade> trades = apiCollector.getRecentAggregateTradesBySeconds(config.getSymbol(), config.getSeconds());
+                List<AggregateTrade> trades = futureCollectorApi.getRecentAggregateTradesBySeconds(config.getSymbol(), config.getSeconds());
                 AggregatePricePeriodInfo pricePeriodInfo = AggregateTradeHandler.handle(trades);
                 log.debug(getThreadName() + "最近交易数据：" + pricePeriodInfo);
                 // 计算最大值、最小值与当前点的关系

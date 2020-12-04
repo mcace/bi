@@ -11,15 +11,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author MC
  */
-public class ApiTraderImpl implements ApiTrader {
+public class FutureTraderApiImpl implements FutureTraderApi {
     /**
      * logger
      */
-    private static final Logger log = LoggerFactory.getLogger(ApiTraderImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(FutureTraderApiImpl.class);
 
     private final SyncRequestClient syncRequestClient;
 
-    public ApiTraderImpl(String apiKey, String apiSecret) {
+    public FutureTraderApiImpl(String apiKey, String apiSecret) {
         this.syncRequestClient = BinanceApiInternalFactory.getInstance().createSyncRequestClient(
                 apiKey,
                 apiSecret, new RequestOptions()
