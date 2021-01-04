@@ -57,6 +57,7 @@ public class OrderAnalysisDataGenerateServiceImpl implements OrderAnalysisDataGe
                 List<BinanceOrder> binanceOrders;
                 do {
                     binanceOrders = spotInformationApi.getTradeRecords(currency, Currency.USDT, limit, startId);
+                    log.info("当前币：{}，取到记录：【{}】条", currency.toString(), binanceOrders.size());
                     if (CollectionUtils.isEmpty(binanceOrders)) {
                         break forTag;
                     }

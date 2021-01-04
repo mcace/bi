@@ -2,9 +2,15 @@ package com.mcsoft.bi.peeper.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.knowm.xchange.binance.dto.trade.BinanceOrder;
+import org.knowm.xchange.currency.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by MC on 2020/12/4.
@@ -20,6 +26,7 @@ class OrderAnalysisDataGenerateServiceTest {
 
     @Test
     void generateOrderAnalysisData() {
-        orderAnalysisDataGenerateService.generateOrderAnalysisData();
+        Map<Currency, List<BinanceOrder>> currencyListMap = orderAnalysisDataGenerateService.generateOrderAnalysisData();
+        Map<String, List<BinanceOrder>> map = currencyListMap.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toString(), entry -> entry.getValue()));
     }
 }
