@@ -1,19 +1,19 @@
 package com.mcsoft.bi.common.bian.spot.api;
 
-import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.Exchange;
+import org.knowm.xchange.binance.dto.marketdata.BinancePrice;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
+import org.knowm.xchange.binance.service.BinanceAccountService;
+import org.knowm.xchange.binance.service.BinanceMarketDataService;
 import org.knowm.xchange.binance.service.BinanceTradeService;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.account.AccountInfo;
-import org.knowm.xchange.service.account.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,26 +23,38 @@ import java.util.List;
  * @author MC
  */
 @Service
-@RequiredArgsConstructor
 public class SpotInformationApiImpl implements SpotInformationApi {
     /**
      * logger
      */
     private static final Logger log = LoggerFactory.getLogger(SpotInformationApiImpl.class);
 
-    @Resource
-    @Qualifier("binanceExchange")
-    private Exchange binanceExchange;
+    private final Exchange binanceExchange;
+
+    private final BinanceTradeService binanceTradeService;
+    private final BinanceMarketDataService binanceMarketDataService;
+    private final BinanceAccountService binanceAccountService;
+
+    public SpotInformationApiImpl(@Qualifier("binanceExchange") Exchange binanceExchange) {
+        this.binanceExchange = binanceExchange;
+        this.binanceAccountService = (BinanceAccountService)binanceExchange.getAccountService();
+        this.binanceTradeService = (BinanceTradeService)binanceExchange.getTradeService();
+        this.binanceMarketDataService = (BinanceMarketDataService)binanceExchange.getMarketDataService();
+    }
 
     @Override
     public AccountInfo getAccountInformation() {
-        final AccountService accountService = binanceExchange.getAccountService();
-        return ExchangeHelper.coverIOException(accountService::getAccountInfo);
+        return ExchangeHelper.coverIOException(binanceAccountService::getAccountInfo);
     }
 
-    public List<BinanceOrder> getTradeRecords(Currency baseCurrency, Currency counterCurrency, Integer limit, Long startId) {
-        final BinanceTradeService tradeService = (BinanceTradeService)binanceExchange.getTradeService();
-        return ExchangeHelper.coverIOException(() -> tradeService.allOrders(new CurrencyPair(baseCurrency, counterCurrency), startId, limit));
+    public List<BinanceOrder> getTradeRecords(Currency base, Currency counter, Integer limit, Long startId) {
+        return ExchangeHelper.coverIOException(() -> binanceTradeService.allOrders(new CurrencyPair(base, counter), startId, limit));
+    }
+
+    @Override
+    public BinancePrice getSymbolPriceTicker(Currency base, Currency counter) {
+        CurrencyPair symbol = new CurrencyPair(base, counter);
+        return ExchangeHelper.coverIOException(() -> binanceMarketDataService.tickerPrice(symbol));
     }
 
     public static class ExchangeHelper {

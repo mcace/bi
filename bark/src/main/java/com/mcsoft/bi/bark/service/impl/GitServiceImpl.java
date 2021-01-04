@@ -1,7 +1,7 @@
 package com.mcsoft.bi.bark.service.impl;
 
 import com.mcsoft.bi.bark.config.BarkGitConfig;
-import com.mcsoft.bi.bark.git.GitSupport;
+import com.mcsoft.bi.common.git.GitSupport;
 import com.mcsoft.bi.bark.model.dto.BarkConfigs;
 import com.mcsoft.bi.bark.service.GitService;
 import com.mcsoft.bi.common.util.JsonUtil;

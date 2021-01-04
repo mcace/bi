@@ -1,4 +1,4 @@
-package com.mcsoft.bi.bark.git;
+package com.mcsoft.bi.common.git;
 
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.transport.CredentialsProvider;

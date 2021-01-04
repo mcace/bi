@@ -1,7 +1,7 @@
 package com.mcsoft.bi.bark.config;
 
 import com.mcsoft.bi.bark.context.AppContext;
-import com.mcsoft.bi.bark.git.GitSupport;
+import com.mcsoft.bi.common.git.GitSupport;
 import lombok.Data;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
