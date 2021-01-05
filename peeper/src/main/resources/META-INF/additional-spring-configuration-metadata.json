@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "tmp-file-path",
+      "type": "java.lang.String",
+      "description": "临时文件路径."
+  }
+] }

@@ -1,12 +1,14 @@
 package com.mcsoft.bi.peeper.service;
 
 import com.mcsoft.bi.common.bian.spot.api.SpotInformationApi;
+import com.mcsoft.bi.peeper.constants.BiConstants;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.knowm.xchange.binance.dto.BinanceException;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
 import org.knowm.xchange.binance.dto.trade.OrderStatus;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +39,9 @@ public class OrderAnalysisDataGenerateServiceImpl implements OrderAnalysisDataGe
     private final SpotInformationApi spotInformationApi;
 
     @Override
-    public Map<Currency, List<BinanceOrder>> generateOrderAnalysisData() {
+    public Map<CurrencyPair, List<BinanceOrder>> generateOrderAnalysisData() {
+        log.info("拉取订单分析数据");
+        long now = System.currentTimeMillis();
         // 拉取账户信息
         final AccountInfo accountInfo = spotInformationApi.getAccountInformation();
         // 拉取所有币交易记录
@@ -47,17 +52,20 @@ public class OrderAnalysisDataGenerateServiceImpl implements OrderAnalysisDataGe
         final Map<Currency, Balance> balances = wallet.getBalances();
 
         final Set<Currency> currencySet = balances.keySet();
-        Map<Currency, List<BinanceOrder>> ordersMap = new HashMap<>();
-        for (Currency currency : currencySet) {
+        Map<CurrencyPair, List<BinanceOrder>> ordersMap = new HashMap<>();
+        AtomicInteger i = new AtomicInteger(0);
+        currencySet.parallelStream().forEach(currency -> {
             forTag:
             try {
+                int cursor = i.incrementAndGet();
                 // limit值最大为1000，如为null则默认为500
                 int limit = 1000;
                 Long startId = null;
                 List<BinanceOrder> binanceOrders;
+                CurrencyPair currencyPair = new CurrencyPair(currency, BiConstants.BASE_CURRENCY);
                 do {
-                    binanceOrders = spotInformationApi.getTradeRecords(currency, Currency.USDT, limit, startId);
-                    log.info("当前币：{}，取到记录：【{}】条", currency.toString(), binanceOrders.size());
+                    binanceOrders = spotInformationApi.getTradeRecords(currencyPair.base, currencyPair.counter, limit, startId);
+                    log.info("当前币：{}({}/{})，取到记录：【{}】条", currencyPair.toString(), cursor, currencySet.size(), binanceOrders.size());
                     if (CollectionUtils.isEmpty(binanceOrders)) {
                         break forTag;
                     }
@@ -66,9 +74,9 @@ public class OrderAnalysisDataGenerateServiceImpl implements OrderAnalysisDataGe
                     final List<BinanceOrder> filledOrders = binanceOrders.stream().filter(binanceOrder -> binanceOrder.status.equals(OrderStatus.FILLED)).collect(Collectors.toList());
 
                     // 循环时如果Map里Currency对应数据已经有列表数据，则添加新数据到旧数据列表中，如无则直接添加到Map中
-                    List<BinanceOrder> orders = ordersMap.get(currency);
+                    List<BinanceOrder> orders = ordersMap.get(currencyPair);
                     if (null == orders) {
-                        ordersMap.put(currency, filledOrders);
+                        ordersMap.put(currencyPair, filledOrders);
                     } else {
                         orders.addAll(filledOrders);
                     }
@@ -82,7 +90,8 @@ public class OrderAnalysisDataGenerateServiceImpl implements OrderAnalysisDataGe
                     log.error("调用币安发生异常", binanceException);
                 }
             }
-        }
+        });
+        log.info("拉取订单分析数据结束，耗时：【{}】", System.currentTimeMillis() - now);
         return ordersMap;
     }
 }

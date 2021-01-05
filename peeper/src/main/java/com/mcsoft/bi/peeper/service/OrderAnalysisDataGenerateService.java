@@ -1,7 +1,7 @@
 package com.mcsoft.bi.peeper.service;
 
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
-import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +14,6 @@ import java.util.Map;
  */
 public interface OrderAnalysisDataGenerateService {
 
-    Map<Currency, List<BinanceOrder>> generateOrderAnalysisData();
+    Map<CurrencyPair, List<BinanceOrder>> generateOrderAnalysisData();
 
 }
