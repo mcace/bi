@@ -1,10 +1,13 @@
 package com.mcsoft.bi.common.bian.spot.api;
 
+import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
 import org.knowm.xchange.binance.dto.marketdata.BinancePrice;
+import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -41,5 +44,18 @@ public interface SpotInformationApi {
      * @return 标记价格
      */
     BinancePrice getSymbolPriceTicker(Currency base, Currency counter);
+
+    /**
+     * 获取K线
+     *
+     * @param base          需要拉取的币
+     * @param counter       拉取币的对手币，和baseCurrency组合成交易对，如ETH,USDT组合成ETHUSDT，作为接口参数symbol传出
+     * @param interval      K线时间间隔
+     * @param limit         拉取数据量
+     * @param startDateTime 拉取起始时间
+     * @param endDateTime   拉取结束时间
+     * @return K线数据列表
+     */
+    List<BinanceKline> getKline(Currency base, Currency counter, KlineInterval interval, Integer limit, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }

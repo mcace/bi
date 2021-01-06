@@ -1,7 +1,9 @@
 package com.mcsoft.bi.common.bian.spot.api;
 
 import org.knowm.xchange.Exchange;
+import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
 import org.knowm.xchange.binance.dto.marketdata.BinancePrice;
+import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
 import org.knowm.xchange.binance.service.BinanceAccountService;
 import org.knowm.xchange.binance.service.BinanceMarketDataService;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 /**
@@ -55,6 +59,14 @@ public class SpotInformationApiImpl implements SpotInformationApi {
     public BinancePrice getSymbolPriceTicker(Currency base, Currency counter) {
         CurrencyPair symbol = new CurrencyPair(base, counter);
         return ExchangeHelper.coverIOException(() -> binanceMarketDataService.tickerPrice(symbol));
+    }
+
+    @Override
+    public List<BinanceKline> getKline(Currency base, Currency counter, KlineInterval interval, Integer limit, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        CurrencyPair pair = new CurrencyPair(base, counter);
+        long startTime = startDateTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        long endTime = endDateTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        return ExchangeHelper.coverIOException(() -> binanceMarketDataService.klines(pair, interval, limit, startTime, endTime));
     }
 
     public static class ExchangeHelper {
