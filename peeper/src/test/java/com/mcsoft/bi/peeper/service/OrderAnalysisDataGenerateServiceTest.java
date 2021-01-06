@@ -38,7 +38,7 @@ class OrderAnalysisDataGenerateServiceTest {
 
     @Test
     public void getSymbolPriceTicker() {
-        BinancePrice symbolPriceTicker = spotInformationApi.getSymbolPriceTicker(Currency.ALGO, BiConstants.BASE_CURRENCY);
+        BinancePrice symbolPriceTicker = spotInformationApi.getPriceTicker(Currency.ALGO, BiConstants.BASE_CURRENCY);
         System.out.println(symbolPriceTicker);
     }
 

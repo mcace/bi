@@ -3,6 +3,7 @@ package com.mcsoft.bi.common.bian.spot.api;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
 import org.knowm.xchange.binance.dto.marketdata.BinancePrice;
+import org.knowm.xchange.binance.dto.marketdata.BinancePriceQuantity;
 import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
 import org.knowm.xchange.binance.service.BinanceAccountService;
@@ -56,9 +57,23 @@ public class SpotInformationApiImpl implements SpotInformationApi {
     }
 
     @Override
-    public BinancePrice getSymbolPriceTicker(Currency base, Currency counter) {
+    public BinancePrice getPriceTicker(Currency base, Currency counter) {
         CurrencyPair symbol = new CurrencyPair(base, counter);
         return ExchangeHelper.coverIOException(() -> binanceMarketDataService.tickerPrice(symbol));
+    }
+
+    @Override
+    public BinancePriceQuantity getBookTicker(Currency base, Currency counter) {
+        List<BinancePriceQuantity> binancePriceQuantities = ExchangeHelper.coverIOException(binanceMarketDataService::tickerAllBookTickers);
+        if (null == binancePriceQuantities) {
+            return null;
+        }
+        return binancePriceQuantities.stream().parallel().filter(q -> q.symbol.equals(base.getCurrencyCode() + counter.getCurrencyCode())).findAny().orElse(null);
+    }
+
+    @Override
+    public List<BinancePriceQuantity> getAllBookTicker() {
+        return ExchangeHelper.coverIOException(binanceMarketDataService::tickerAllBookTickers);
     }
 
     @Override

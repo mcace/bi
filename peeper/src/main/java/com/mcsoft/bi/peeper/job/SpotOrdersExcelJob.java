@@ -116,7 +116,7 @@ public class SpotOrdersExcelJob {
         Currency counter = pair.counter;
         String symbol = base.getCurrencyCode() + counter.getCurrencyCode();
         Balance balance = wallet.getBalance(base);
-        BinancePrice symbolPriceTicker = spotInformationApi.getSymbolPriceTicker(base, counter);
+        BinancePrice symbolPriceTicker = spotInformationApi.getPriceTicker(base, counter);
         BigDecimal currentPairPrice = symbolPriceTicker.getPrice();
         BigDecimal currentPairBalance = BigDecimal.ZERO;
         // 如余额不为0，则计算当前交易对的余额

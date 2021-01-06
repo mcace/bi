@@ -2,6 +2,7 @@ package com.mcsoft.bi.common.bian.spot.api;
 
 import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
 import org.knowm.xchange.binance.dto.marketdata.BinancePrice;
+import org.knowm.xchange.binance.dto.marketdata.BinancePriceQuantity;
 import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
 import org.knowm.xchange.currency.Currency;
@@ -43,7 +44,23 @@ public interface SpotInformationApi {
      * @param counter 拉取币的对手币，和baseCurrency组合成交易对，如ETH,USDT组合成ETHUSDT，作为接口参数symbol传出
      * @return 标记价格
      */
-    BinancePrice getSymbolPriceTicker(Currency base, Currency counter);
+    BinancePrice getPriceTicker(Currency base, Currency counter);
+
+    /**
+     * 当前最优挂单
+     *
+     * @param base    需要拉取的币
+     * @param counter 拉取币的对手币，和baseCurrency组合成交易对，如ETH,USDT组合成ETHUSDT，作为接口参数symbol传出
+     * @return 最优挂单数据
+     */
+    BinancePriceQuantity getBookTicker(Currency base, Currency counter);
+
+    /**
+     * 当前最优挂单
+     *
+     * @return 最优挂单数据
+     */
+    List<BinancePriceQuantity> getAllBookTicker();
 
     /**
      * 获取K线
@@ -57,5 +74,6 @@ public interface SpotInformationApi {
      * @return K线数据列表
      */
     List<BinanceKline> getKline(Currency base, Currency counter, KlineInterval interval, Integer limit, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
 
 }
