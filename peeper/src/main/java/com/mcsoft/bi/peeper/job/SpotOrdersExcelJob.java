@@ -1,6 +1,7 @@
 package com.mcsoft.bi.peeper.job;
 
 import com.mcsoft.bi.common.bian.spot.api.SpotInformationApi;
+import com.mcsoft.bi.common.util.TimeUtils;
 import com.mcsoft.bi.peeper.model.dto.BinanceOrderExcelDTO;
 import com.mcsoft.bi.peeper.service.OrderAnalysisDataGenerateService;
 import com.mcsoft.bi.peeper.util.excel.ExcelUtils;
@@ -24,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,7 +61,7 @@ public class SpotOrdersExcelJob {
 
         log.info("拉取到订单数据{}条，准备转换为DTO输出excel", currencyListMap.size());
         // Excel文件信息
-        String fileName = new Date().getTime() + "_bi.xlsx";
+        String fileName = TimeUtils.TimeFormat.YYYYMMDDHHMMSS.formatNow() + "_bi.xlsx";
         String pathname = filePath + File.separator + fileName;
         File file = new File(pathname);
         FileOutputStream fileOutputStream = new FileOutputStream(file);

@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public abstract class TimeUtils {
 
     public enum TimeFormat {
-        YYYY_MM_DD_HH_MM_SS("yyyy-MM-dd HH:mm:ss"), YYYY_MM_DD("yyyy-MM-dd");
+        YYYY_MM_DD_HH_MM_SS("yyyy-MM-dd HH:mm:ss"), YYYY_MM_DD("yyyy-MM-dd"), YYYYMMDDHHMMSS("yyyyMMddHHmmss");
 
         private final String format;
         private final DateTimeFormatter formatter;
