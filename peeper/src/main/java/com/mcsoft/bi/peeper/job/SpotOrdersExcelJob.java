@@ -3,7 +3,7 @@ package com.mcsoft.bi.peeper.job;
 import com.mcsoft.bi.common.bian.spot.api.SpotInformationApi;
 import com.mcsoft.bi.common.util.TimeUtils;
 import com.mcsoft.bi.peeper.model.dto.BinanceOrderExcelDTO;
-import com.mcsoft.bi.peeper.service.OrderAnalysisDataGenerateService;
+import com.mcsoft.bi.peeper.service.OrderService;
 import com.mcsoft.bi.peeper.util.excel.ExcelUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.knowm.xchange.binance.dto.marketdata.BinancePrice;
@@ -43,7 +43,7 @@ public class SpotOrdersExcelJob {
     private static final Logger log = LoggerFactory.getLogger(SpotOrdersExcelJob.class);
 
     @Autowired
-    private OrderAnalysisDataGenerateService orderAnalysisDataGenerateService;
+    private OrderService orderService;
     @Autowired
     private SpotInformationApi spotInformationApi;
 
@@ -53,7 +53,7 @@ public class SpotOrdersExcelJob {
     public void export() throws FileNotFoundException {
         long now = System.currentTimeMillis();
         log.info("开始导出Excel，拉取订单数据");
-        Map<CurrencyPair, List<BinanceOrder>> currencyListMap = orderAnalysisDataGenerateService.generateOrderAnalysisData();
+        Map<CurrencyPair, List<BinanceOrder>> currencyListMap = orderService.generateOrderAnalysisData();
         if (MapUtils.isEmpty(currencyListMap)) {
             log.info("无订单数据，结束处理");
             return;

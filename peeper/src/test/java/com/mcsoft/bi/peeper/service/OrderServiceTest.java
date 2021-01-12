@@ -23,16 +23,16 @@ import java.util.stream.Collectors;
  */
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
-class OrderAnalysisDataGenerateServiceTest {
+class OrderServiceTest {
 
     @Autowired
-    private OrderAnalysisDataGenerateService orderAnalysisDataGenerateService;
+    private OrderService orderService;
     @Autowired
     private SpotInformationApi spotInformationApi;
 
     @Test
     void generateOrderAnalysisData() {
-        Map<CurrencyPair, List<BinanceOrder>> currencyListMap = orderAnalysisDataGenerateService.generateOrderAnalysisData();
+        Map<CurrencyPair, List<BinanceOrder>> currencyListMap = orderService.generateOrderAnalysisData();
         Map<String, List<BinanceOrder>> map = currencyListMap.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toString(), entry -> entry.getValue()));
     }
 

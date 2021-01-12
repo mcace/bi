@@ -1,10 +1,19 @@
 package com.mcsoft.bi.peeper;
 
+import com.alibaba.fastjson.JSON;
 import com.mcsoft.bi.common.bian.spot.api.SpotInformationApi;
+import com.mcsoft.bi.common.util.TimeUtils;
 import com.mcsoft.bi.peeper.constants.BiConstants;
+import com.mcsoft.bi.peeper.model.dto.echarts.BuyPointDTO;
+import com.mcsoft.bi.peeper.service.OrderService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
 import org.knowm.xchange.binance.dto.marketdata.BinancePriceQuantity;
+import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
+import org.knowm.xchange.binance.dto.trade.BinanceOrder;
+import org.knowm.xchange.binance.dto.trade.OrderSide;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Wallet;
@@ -16,6 +25,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +47,8 @@ public class SpotTest {
 
     @Autowired
     private SpotInformationApi spotInformationApi;
+    @Autowired
+    private OrderService orderService;
 
     @Test
     public void testBookTicker() {
@@ -107,6 +121,77 @@ public class SpotTest {
 
     private BinancePriceQuantity getBookTicker(List<BinancePriceQuantity> allBookTicker, Currency base, Currency counter) {
         return allBookTicker.stream().parallel().filter(q -> q.symbol.equals(base.getCurrencyCode() + counter.getCurrencyCode())).findAny().orElse(null);
+    }
+
+    @Test
+    public void generateEchartsKLineData() {
+        Currency base = Currency.getInstanceNoCreate("CRV");
+        Currency counter = BiConstants.BASE_CURRENCY;
+        List<BinanceKline> kline = spotInformationApi.getKline(base, counter, KlineInterval.h1, 1000, null, null);
+
+        // 输出echarts需要的k线数据
+        // 格式：数组嵌套： [[时间,开,收,低,高],[时间,开,收,低,高]]
+        Object[][] objs = new Object[kline.size()][];
+        for (int i = 0; i < kline.size(); i++) {
+            BinanceKline binanceKline = kline.get(i);
+            Object[] data = new Object[5];
+            data[0] = TimeUtils.TimeFormat.YYYY_MM_DD_HH_MM_SS.formatMillisTime(binanceKline.getOpenTime());
+            data[1] = binanceKline.getOpenPrice();
+            data[2] = binanceKline.getClosePrice();
+            data[3] = binanceKline.getLowPrice();
+            data[4] = binanceKline.getHighPrice();
+            objs[i] = data;
+        }
+
+        // 输出数组
+        log.info("输出echarts数据：\n{}", JSON.toJSONString(objs));
+
+
+        // 输出买点信息
+        // 买点信息格式：
+        /*
+        [
+            {
+                name: 'XX标点',
+                        coord: ['2013/5/31', 2300],
+                value: 2300,
+                        itemStyle: {
+                            color: 'rgb(0,255,0)'
+                        }
+            }
+         ]
+         */
+        List<BinanceOrder> orders = orderService.getOrders(base, counter, null);
+        if (CollectionUtils.isNotEmpty(orders)) {
+            BuyPointDTO[] buyPointDTOS = new BuyPointDTO[orders.size()];
+            for (int i = 0; i < orders.size(); i++) {
+                BinanceOrder binanceOrder = orders.get(i);
+
+                BuyPointDTO buyPointDTO = new BuyPointDTO();
+                buyPointDTO.setValue(binanceOrder.price.intValue());
+                Object[] coord = new Object[2];
+
+                // 按小时计，去除分秒，后续如果要改K线区间，该处也要跟着改
+                LocalDateTime time = LocalDateTime.ofInstant(Instant.ofEpochMilli(binanceOrder.time), ZoneOffset.ofHours(8)).withMinute(0).withSecond(0);
+
+                coord[0] = TimeUtils.TimeFormat.YYYY_MM_DD_HH_MM_SS.formatLocalDateTime(time);
+                coord[1] = binanceOrder.price;
+                buyPointDTO.setCoord(coord);
+                buyPointDTO.setName(binanceOrder.price.toPlainString());
+                BuyPointDTO.ItemStyle itemStyle = new BuyPointDTO.ItemStyle();
+                if (binanceOrder.side.equals(OrderSide.BUY)) {
+                    itemStyle.setColor("rgb(135,206,250)");
+                } else {
+                    itemStyle.setColor("rgb(102,205,170)");
+                }
+                buyPointDTO.setItemStyle(itemStyle);
+
+                buyPointDTOS[i] = buyPointDTO;
+            }
+
+            log.info("输出echarts买点数据：\n{}", JSON.toJSONString(buyPointDTOS));
+        }
+
     }
 
 }

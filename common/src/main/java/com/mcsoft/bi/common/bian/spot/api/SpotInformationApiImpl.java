@@ -79,8 +79,8 @@ public class SpotInformationApiImpl implements SpotInformationApi {
     @Override
     public List<BinanceKline> getKline(Currency base, Currency counter, KlineInterval interval, Integer limit, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         CurrencyPair pair = new CurrencyPair(base, counter);
-        long startTime = startDateTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
-        long endTime = endDateTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        Long startTime = null == startDateTime ? null : startDateTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        Long endTime = null == endDateTime ? null : endDateTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
         return ExchangeHelper.coverIOException(() -> binanceMarketDataService.klines(pair, interval, limit, startTime, endTime));
     }
 

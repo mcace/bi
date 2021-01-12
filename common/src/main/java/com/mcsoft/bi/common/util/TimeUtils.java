@@ -1,6 +1,8 @@
 package com.mcsoft.bi.common.util;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -23,6 +25,10 @@ public abstract class TimeUtils {
 
         public String formatLocalDateTime(LocalDateTime time) {
             return formatter.format(time);
+        }
+
+        public String formatMillisTime(long time) {
+            return formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.ofHours(8)));
         }
 
         public LocalDateTime parseLocalDateTime(String time) {
