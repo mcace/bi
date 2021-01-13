@@ -1,5 +1,6 @@
 package com.mcsoft.bi.common.bian.future.api;
 
+import com.binance.client.model.market.MarkPrice;
 import com.binance.client.model.trade.AccountInformation;
 import com.binance.client.model.trade.Order;
 
@@ -23,7 +24,8 @@ public interface FutureInformationApi {
 
     /**
      * 获取所有合约交易记录
-     *  @param symbol    交易对（e.g ALGOUSDT），必传
+     *
+     * @param symbol    交易对（e.g ALGOUSDT），必传
      * @param orderId   起始订单id，类似游标，选传
      * @param startTime 查询起始时间，选传
      * @param endTime   查询结束时间，选传
@@ -31,5 +33,13 @@ public interface FutureInformationApi {
      * @return
      */
     List<Order> getAllOrders(String symbol, Long orderId, LocalDateTime startTime, LocalDateTime endTime, Integer limit);
+
+    /**
+     * 获取标记价格和资金费率
+     *
+     * @param symbol 交易对（e.g ALGOUSDT），可以为空
+     * @return 标记价格及资金费率列表
+     */
+    List<MarkPrice> getMarkPrice(String symbol);
 
 }

@@ -3,6 +3,7 @@ package com.mcsoft.bi.common.bian.future.api;
 import com.binance.client.RequestOptions;
 import com.binance.client.SyncRequestClient;
 import com.binance.client.impl.BinanceApiInternalFactory;
+import com.binance.client.model.market.MarkPrice;
 import com.binance.client.model.trade.AccountInformation;
 import com.binance.client.model.trade.Order;
 import org.slf4j.Logger;
@@ -42,6 +43,11 @@ public class FutureInformationApiImpl implements FutureInformationApi {
         final Long startTimeLong = startTime == null ? null : startTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
         final Long endTimeLong = endTime == null ? null : endTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
         return syncRequestClient.getAllOrders(symbol, orderId, startTimeLong, endTimeLong, limit);
+    }
+
+    @Override
+    public List<MarkPrice> getMarkPrice(String symbol) {
+        return syncRequestClient.getMarkPrice(symbol);
     }
 
 }

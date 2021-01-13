@@ -53,19 +53,21 @@ public class SpotTest {
     @Test
     public void testBookTicker() {
 
+        // DEPRECATED
         // 搬砖逻辑
         Integer i = 0;
         while (i < 20) {
-            BinancePriceQuantity bookTicker = spotInformationApi.getBookTicker(Currency.ALGO, BiConstants.BASE_CURRENCY);
+            Currency base = Currency.CHR;
+            BinancePriceQuantity bookTicker = spotInformationApi.getBookTicker(base, BiConstants.BASE_CURRENCY);
             BinancePriceQuantity bookTicker2 = spotInformationApi.getBookTicker(Currency.BUSD, BiConstants.BASE_CURRENCY);
-            BinancePriceQuantity bookTicker3 = spotInformationApi.getBookTicker(Currency.ALGO, Currency.BUSD);
+            BinancePriceQuantity bookTicker3 = spotInformationApi.getBookTicker(base, Currency.BUSD);
 
-            BigDecimal balance = new BigDecimal("10");
+            BigDecimal balance = new BigDecimal("10000");
             log.info("原本余额：{}", balance);
             BigDecimal algos = balance.divide(bookTicker.askPrice, 12, RoundingMode.HALF_UP);
-            log.info("USDT买ALGO数量：{}", algos);
+            log.info("USDT买{}数量：{}", base, algos);
             BigDecimal busds = algos.multiply(bookTicker3.bidPrice);
-            log.info("卖ALGO买BUSD数量：{}", busds);
+            log.info("卖{}买BUSD数量：{}", base, busds);
             BigDecimal usdts = busds.multiply(bookTicker2.bidPrice);
             log.info("卖BUSD买USDT数量：{}", usdts);
             i++;
@@ -82,6 +84,7 @@ public class SpotTest {
     public void testAllBookTicker() {
 
         // 搬砖逻辑
+        // aCoin->middle->bCoin->aCoin
         List<BinancePriceQuantity> allBookTicker = spotInformationApi.getAllBookTicker();
 
         Currency aCoin = BiConstants.BASE_CURRENCY;
@@ -90,6 +93,7 @@ public class SpotTest {
         Wallet wallet = accountInformation.getWallet();
         Set<Currency> currencies = wallet.getBalances().keySet();
 
+        int tradeType = 0;// 0-吃单交易 1-挂单交易
 
         for (Currency bCoin : currencies) {
             currencies.parallelStream().forEach(middle -> {
@@ -103,13 +107,30 @@ public class SpotTest {
                 }
 
                 try {
-                    BigDecimal balance = new BigDecimal("1000");
-                    BigDecimal algos = balance.divide(bookTicker.askPrice, 12, RoundingMode.HALF_UP);
-                    BigDecimal busds = algos.multiply(bookTicker3.bidPrice);
-                    BigDecimal usdts = busds.multiply(bookTicker2.bidPrice);
-                    if (usdts.compareTo(balance) > 0) {
-                        log.info("成了：middle：{}，bCoin：{}\n原本余额：{}\nUSDT买{}数量：{}\n卖{}买BUSD数量：{}\n卖BUSD买USDT数量：{}", middle, bCoin
-                                , balance, middle.toString(), algos, middle.toString(), busds, usdts);
+                    // 本金10000U
+                    BigDecimal balance = new BigDecimal("10000");
+                    BigDecimal buyMiddle;
+                    BigDecimal sellMiddleToBCoin;
+                    BigDecimal sellBCoinToACoin;
+                    if (0 == tradeType) {
+                        // 吃单买入，取卖价
+                        buyMiddle = balance.divide(bookTicker.askPrice, 12, RoundingMode.HALF_UP);
+                        // 吃单卖出，取买价
+                        sellMiddleToBCoin = buyMiddle.multiply(bookTicker3.bidPrice);
+                        // 吃单卖出，取买价
+                        sellBCoinToACoin = sellMiddleToBCoin.multiply(bookTicker2.bidPrice);
+                    } else {
+                        // 挂单买入，取买价
+                        buyMiddle = balance.divide(bookTicker.bidPrice, 12, RoundingMode.HALF_UP);
+                        // 挂单卖出，取卖价
+                        sellMiddleToBCoin = buyMiddle.multiply(bookTicker3.askPrice);
+                        // 挂单卖出，取卖价
+                        sellBCoinToACoin = sellMiddleToBCoin.multiply(bookTicker2.askPrice);
+                    }
+                    // 计算收益
+                    if (sellBCoinToACoin.compareTo(balance) > 0) {
+                        log.info("成了：middle：{}，bCoin：{}\n原本余额：{}\nUSDT买{}数量：{}\n卖{}买{}数量：{}\n卖{}买USDT数量：{}", middle.toString(), bCoin.toString()
+                                , balance, middle.toString(), buyMiddle, middle.toString(), bCoin.toString(), sellMiddleToBCoin, bCoin.toString(), sellBCoinToACoin);
                     }
                 } catch (Exception e) {
                     log.info("发生异常，bookTicker:{},bookTicker2:{},bookTicker3:{}", bookTicker, bookTicker2, bookTicker3);
