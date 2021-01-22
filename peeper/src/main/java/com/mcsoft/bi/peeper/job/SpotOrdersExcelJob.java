@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,25 +87,12 @@ public class SpotOrdersExcelJob {
             sheetInfoList.add(sheetInfo);
         }
 
-        // 没有余额的交易对移动到列表后端
-        int head = 0;
-        int tail = sheetInfoList.size() - 1;
-
-        log.info("准备移动无余额数据到尾部");
-        while (head != tail) {
-            ExcelUtils.SheetInfo<?> headSheetInfo = sheetInfoList.get(head);
-            List<BinanceOrderExcelDTO> data = (List<BinanceOrderExcelDTO>)headSheetInfo.data;
+        // 按持仓量（等值U数量）排列
+        sheetInfoList.sort(Comparator.comparing((headSheetInfo) -> {
+            List<BinanceOrderExcelDTO> data = ((ExcelUtils.SheetInfo<BinanceOrderExcelDTO>)headSheetInfo).data;
             BinanceOrderExcelDTO currentBalance = data.get(data.size() - 1);
-            if (currentBalance.getExecutedQty().compareTo(BigDecimal.ZERO) == 0) {
-                // 当前余额为0，首尾交换，尾部指针向前移动
-                sheetInfoList.set(head, sheetInfoList.get(tail));
-                sheetInfoList.set(tail, headSheetInfo);
-                tail--;
-            } else {
-                // 当前余额不为0，不进行交换，头部指针向后移动
-                head++;
-            }
-        }
+            return currentBalance.getCummulativeQuoteQty();
+        }).reversed());
 
         log.info("DTO转换完成，输出excel到：{}", pathname);
         ExcelUtils.generateExcelWithSheets(fileOutputStream, sheetInfoList);
